@@ -76,6 +76,7 @@
 
 		<script src="js/BufferGeometryUtils.js"></script>
 		<script src="js/ShaderTerrain.js"></script>
+		<script src="js/loaders/OBJLoader.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/libs/stats.min.js"></script>
@@ -293,7 +294,7 @@
 				// SCENE (FINAL)
 
 				scene = new THREE.Scene();
-				scene.fog = new THREE.Fog( 0x050505, 2000, 4000 );
+				scene.fog = new THREE.Fog( 0x050505, 1, 10000 );
 
 				// LIGHTS
 
@@ -536,12 +537,12 @@
 
 				loader.load( "models/animated/horse.js", function( geometry ) {
 
-					addMorph( geometry, 250, 0.5, startX -500, 50, 700 );
-					addMorph( geometry, 250, 0.5, startX - Math.random() * 500, 50, -200 );
-					addMorph( geometry, 250, 0.5, startX - Math.random() * 500, 50, 200 );
-					addMorph( geometry, 250, 0.5, startX - Math.random() * 500, 50, 1000 );
-					console.log(geometry);
-
+					addMorph( geometry, 250, 0.6, startX -500, 50, 700 );
+					addMorph( geometry, 250, 0.6, startX - Math.random() * 500, 50, -200 );
+					addMorph( geometry, 250, 0.6, startX - Math.random() * 500, 50, -800 );
+					addMorph( geometry, 250, 0.6, startX - Math.random() * 500, 50, 1000 );
+					// console.log(geometry);`
+// 
 				} );
 
 				loader.load( "models/animated/flamingo.js", function( geometry ) {
@@ -556,6 +557,103 @@
 
 				} );
 
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded , total );
+				};
+				var texture = new THREE.Texture();
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+				var loader = new THREE.ImageLoader( manager );
+				loader.load( 'models/Tree/pinetree.jpg', function ( image ) {
+					texture.image = image;
+					texture.needsUpdate = true;
+				} );	
+				// model
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+500);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+300, 40-0.5, 100+300);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+600, 40-0.5, 100-100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+200, 40-0.5, 100-700);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500-300, 40-0.5, 100-600);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+800);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500, 40-0.5, 1000);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+
+
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500, 40-0.5, 100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+500);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+300, 40-0.5, 100+300);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+600, 40-0.5, 100-100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+200, 40-0.5, 100-700);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500-300, 40-0.5, 100-600);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+800);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500, 40-0.5, 1000);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(800, 40-0.5, 100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+100, 40-0.5, 100+500);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+300, 40-0.5, 100+300);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+600, 40-0.5, 100-100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+200, 40-0.5, 100-700);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900-300, 40-0.5, 100-600);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(1000+100, 40-0.5, 100+800);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(1200, 40-0.5, 1000);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
+				}, onProgress, onError );
+
+
+		
 			}
 
 			//
@@ -639,6 +737,15 @@
 
 				var delta = clock.getDelta();
 
+				scene.traverse(function (e){						
+					if(e.name == "Model")
+					{
+						e.position.x -= 5;		
+						// e.position.z =350;		
+						// e.position.y  =40;
+					}	
+				});
+
 				if ( terrain.visible ) {
 
 					controls.update();
@@ -691,7 +798,6 @@
 						if ( morph.position.x  > 2000 )  {
 
 							morph.position.x = -1500 - Math.random() * 500;
-
 						}
 
 
