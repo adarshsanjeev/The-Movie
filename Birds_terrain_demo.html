@@ -260,57 +260,13 @@
 			var textMesh1;
 
 			var mlib = {};
-
+			var starttime = new Date().getTime();
+			var scenetarns = 0;
 			init();
 			animate();
 
-			function init() {
 
-				container = document.getElementById( 'container' );
-
-				// SCENE (RENDER TARGET)
-
-				sceneRenderTarget = new THREE.Scene();
-
-				cameraOrtho = new THREE.OrthographicCamera( SCREEN_WIDTH / - 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_HEIGHT / - 2, -10000, 10000 );
-				cameraOrtho.position.z = 100;
-
-				sceneRenderTarget.add( cameraOrtho );
-
-				// CAMERA
-
-				camera = new THREE.PerspectiveCamera( 40, SCREEN_WIDTH / SCREEN_HEIGHT, 2, 4000 );
-				camera.position.set( -1200, 800, 1200 );
-
-				controls = new THREE.OrbitControls( camera );
-				controls.target.set( 0, 0, 0 );
-
-				controls.rotateSpeed = 1.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
-
-				controls.keys = [ 65, 83, 68 ];
-
-				// SCENE (FINAL)
-
-				scene = new THREE.Scene();
-				scene.fog = new THREE.Fog( 0x050505, 1, 10000 );
-
-				// LIGHTS
-
-				scene.add( new THREE.AmbientLight( 0x111111 ) );
-
-				directionalLight = new THREE.DirectionalLight( 0xffffff, 1.15 );
-				directionalLight.position.set( 500, 2000, 0 );
-				scene.add( directionalLight );
-
-				pointLight = new THREE.PointLight( 0xff4400, 1.5 );
-				pointLight.position.set( 0, 0, 0 );
-				scene.add( pointLight );
-
-
-				// HEIGHT + NORMAL MAPS
-
+			function LoadTerrain(){
 				var normalShader = THREE.NormalMapShader;
 
 				var rx = 256, ry = 256;
@@ -345,12 +301,22 @@
 				var specularMap = new THREE.WebGLRenderTarget( 2048, 2048, pars );
 				specularMap.texture.generateMipmaps = false;
 
-				var diffuseTexture1 = textureLoader.load( "textures/terrain/grasslight-big.jpg", function () {
+				if(scenetarns==0){
+					var diffuseTexture1 = textureLoader.load( "textures/terrain/grasslight-big.jpg", function () {
 
-					loadTextures();
-					applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
+						loadTextures();
+						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
 
-				} );
+					} );}
+
+				if(scenetarns==1){
+					var diffuseTexture1 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", function () {
+
+						loadTextures();
+						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
+
+					} );}
+
 
 				var diffuseTexture2 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", loadTextures );
 				var detailTexture = textureLoader.load( "textures/terrain/grasslight-big-nm.jpg", loadTextures );
@@ -428,6 +394,52 @@
 				terrain.rotation.x = -Math.PI / 2;
 				terrain.visible = false;
 				scene.add( terrain );
+			}
+
+			function init() {
+
+				container = document.getElementById( 'container' );
+
+				// SCENE (RENDER TARGET)
+
+				sceneRenderTarget = new THREE.Scene();
+
+				cameraOrtho = new THREE.OrthographicCamera( SCREEN_WIDTH / - 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_HEIGHT / - 2, -10000, 10000 );
+				cameraOrtho.position.z = 100;
+
+				sceneRenderTarget.add( cameraOrtho );
+
+				// CAMERA
+
+				camera = new THREE.PerspectiveCamera( 40, SCREEN_WIDTH / SCREEN_HEIGHT, 2, 4000 );
+				camera.position.set( -1200, 800, 1200 );
+
+				controls = new THREE.OrbitControls( camera );
+				controls.target.set( 0, 0, 0 );
+
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+
+				controls.keys = [ 65, 83, 68 ];
+
+				// SCENE (FINAL)
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.Fog( 0x050505, 1, 10000 );
+
+				// LIGHTS
+
+				scene.add( new THREE.AmbientLight( 0x111111 ) );
+
+				directionalLight = new THREE.DirectionalLight( 0xffffff, 1.15 );
+				directionalLight.position.set( 500, 2000, 0 );
+				scene.add( directionalLight );
+
+				pointLight = new THREE.PointLight( 0xff4400, 1.5 );
+				pointLight.position.set( 0, 0, 0 );
+				scene.add( pointLight );
+
 
 				// RENDERER
 
@@ -559,13 +571,13 @@
 
 				var manager = new THREE.LoadingManager();
 				manager.onProgress = function ( item, loaded, total ) {
-					console.log( item, loaded , total );
+					// console.log( item, loaded , total );
 				};
 				var texture = new THREE.Texture();
 				var onProgress = function ( xhr ) {
 					if ( xhr.lengthComputable ) {
 						var percentComplete = xhr.loaded / xhr.total * 100;
-						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+						// console.log( Math.round(percentComplete, 2) + '% downloaded' );
 					}
 				};
 				var onError = function ( xhr ) {
@@ -576,83 +588,15 @@
 					texture.needsUpdate = true;
 				} );	
 				// model
+				var position = 500;
+				for (var trn = 0; trn <=4; trn++) {
+					position =500 + trn*200; 
+					var loader = new THREE.OBJLoader( manager );
+					loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position, 40-0.5, 100+500);object.name = "Model-" + trn ;object.scale.set(50,70,50);scene.add( object );
+					}, onProgress, onError );
+				};
 
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+500);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+300, 40-0.5, 100+300);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+600, 40-0.5, 100-100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+200, 40-0.5, 100-700);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500-300, 40-0.5, 100-600);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+800);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500, 40-0.5, 1000);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-
-
-
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500, 40-0.5, 100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+500);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+300, 40-0.5, 100+300);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+600, 40-0.5, 100-100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+200, 40-0.5, 100-700);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500-300, 40-0.5, 100-600);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500+100, 40-0.5, 100+800);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(500, 40-0.5, 1000);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-
-
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(800, 40-0.5, 100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+100, 40-0.5, 100+500);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+300, 40-0.5, 100+300);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+600, 40-0.5, 100-100);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900+200, 40-0.5, 100-700);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(900-300, 40-0.5, 100-600);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(1000+100, 40-0.5, 100+800);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(1200, 40-0.5, 1000);object.name = "Model";object.scale.set(50,70,50);scene.add( object );
-				}, onProgress, onError );
-
-
+				LoadTerrain();
 		
 			}
 
@@ -738,7 +682,7 @@
 				var delta = clock.getDelta();
 
 				scene.traverse(function (e){						
-					if(e.name == "Model")
+					if(e.name.search(/Model-/i) != -1)
 					{
 						e.position.x -= 5;		
 						// e.position.z =350;		
@@ -775,6 +719,37 @@
 						uniformsNoise[ "offset" ].value.x += delta * 0.05;
 
 						uniformsTerrain[ "uOffset" ].value.x = 4 * uniformsNoise[ "offset" ].value.x;
+						
+						var currentime = new Date().getTime();
+					    if(currentime/1000 - starttime/1000 > 15 && scenetarns ==0) 
+					    {
+					        starttime = currentime;
+					        scenetarns=1;
+					        var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat };
+					        var textureLoader = new THREE.TextureLoader();
+	        				var specularMap = new THREE.WebGLRenderTarget( 2048, 2048, pars );
+	        				specularMap.texture.generateMipmaps = false;        
+        					var diffuseTexture1 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", function () {
+
+        						loadTextures();
+        						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
+
+        					} );
+	        				var diffuseTexture2 = textureLoader.load( "textures/terrain/grasslight-big.jpg", loadTextures );
+	        				var detailTexture = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", loadTextures );
+
+	        				diffuseTexture1.wrapS = diffuseTexture1.wrapT = THREE.RepeatWrapping;
+	        				diffuseTexture2.wrapS = diffuseTexture2.wrapT = THREE.RepeatWrapping;
+	        				detailTexture.wrapS = detailTexture.wrapT = THREE.RepeatWrapping;
+	        				specularMap.texture.wrapS = specularMap.texture.wrapT = THREE.RepeatWrapping;
+
+	        				uniformsTerrain[ "tDiffuse1" ].value = diffuseTexture1;
+							uniformsTerrain[ "tDiffuse2" ].value = diffuseTexture2;
+							uniformsTerrain[ "tSpecular" ].value = specularMap;
+							uniformsTerrain[ "tDetail" ].value = detailTexture;
+					        
+					    }
+
 
 						quadTarget.material = mlib[ "heightmap" ];
 						renderer.render( sceneRenderTarget, cameraOrtho, heightMap, true );
