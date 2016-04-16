@@ -83,15 +83,6 @@
 
 		<script id="fragmentShaderNoise" type="x-shader/x-fragment">
 
-			//
-			// Description : Array and textureless GLSL 3D simplex noise function.
-			//      Author : Ian McEwan, Ashima Arts.
-			//  Maintainer : ijm
-			//     Lastmod : 20110409 (stegu)
-			//     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
-			//               Distributed under the MIT License. See LICENSE file.
-			//
-
 			uniform float time;
 			varying vec2 vUv;
 
@@ -588,14 +579,19 @@
 					texture.needsUpdate = true;
 				} );	
 				// model
-				var position = 500;
-				for (var trn = 0; trn <=4; trn++) {
-					position =500 + trn*200; 
-					var loader = new THREE.OBJLoader( manager );
-					loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position, 40-0.5, 100+500);object.name = "Model-" + trn ;object.scale.set(50,70,50);scene.add( object );
-					}, onProgress, onError );
-				};
+				var position = -5000;
+				var trn=0;
+				var loader = new THREE.OBJLoader( manager );
+				for (var trn =0 ; trn <=19; trn++) {
+					if(trn <10){				
+						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+4800, 40-0.5,position+trn*260);object.name = "Model-" + trn++ ;object.scale.set(20,50,30);scene.add( object );
+						}, onProgress, onError );}
+					if(trn >=10){				
+						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+4400, 40-0.5,position+(trn%10)*260);object.name = "Model-" + trn++ ;object.scale.set(50,70,50);scene.add( object );
+						}, onProgress, onError );}
 
+				};
+					
 				LoadTerrain();
 		
 			}
@@ -685,6 +681,7 @@
 					if(e.name.search(/Model-/i) != -1)
 					{
 						e.position.x -= 5;		
+						console.log(e.name);
 						// e.position.z =350;		
 						// e.position.y  =40;
 					}	
@@ -715,13 +712,11 @@
 
 						animDelta = THREE.Math.clamp( animDelta + 0.00075 * animDeltaDir, 0, 0.05 );
 						uniformsNoise[ "time" ].value += delta * animDelta;
-
 						uniformsNoise[ "offset" ].value.x += delta * 0.05;
-
 						uniformsTerrain[ "uOffset" ].value.x = 4 * uniformsNoise[ "offset" ].value.x;
 						
 						var currentime = new Date().getTime();
-					    if(currentime/1000 - starttime/1000 > 15 && scenetarns ==0) 
+					    if(currentime/1000 - starttime/1000 > 10 && scenetarns ==0) 
 					    {
 					        starttime = currentime;
 					        scenetarns=1;
@@ -749,15 +744,11 @@
 							uniformsTerrain[ "tDetail" ].value = detailTexture;
 					        
 					    }
-
-
 						quadTarget.material = mlib[ "heightmap" ];
 						renderer.render( sceneRenderTarget, cameraOrtho, heightMap, true );
 
 						quadTarget.material = mlib[ "normal" ];
 						renderer.render( sceneRenderTarget, cameraOrtho, normalMap, true );
-
-						//updateNoise = false;
 
 					}
 
@@ -775,9 +766,7 @@
 							morph.position.x = -1500 - Math.random() * 500;
 						}
 
-
 					}
-
 					//renderer.render( scene, camera );
 					composer.render( 0.1 );
 
