@@ -301,7 +301,7 @@
 					} );}
 
 				if(scenetarns==1){
-					var diffuseTexture1 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", function () {
+					var diffuseTexture1 = textureLoader.load( "textures/terrain/grasslight-big.jpg", function () {
 
 						loadTextures();
 						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
@@ -309,7 +309,7 @@
 					} );}
 
 
-				var diffuseTexture2 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", loadTextures );
+				var diffuseTexture2 = textureLoader.load( "textures/terrain/grasslight-big.jpg", loadTextures );
 				var detailTexture = textureLoader.load( "textures/terrain/grasslight-big-nm.jpg", loadTextures );
 
 				diffuseTexture1.wrapS = diffuseTexture1.wrapT = THREE.RepeatWrapping;
@@ -681,9 +681,6 @@
 					if(e.name.search(/Model-/i) != -1)
 					{
 						e.position.x -= 5;		
-						console.log(e.name);
-						// e.position.z =350;		
-						// e.position.y  =40;
 					}	
 				});
 
@@ -716,22 +713,40 @@
 						uniformsTerrain[ "uOffset" ].value.x = 4 * uniformsNoise[ "offset" ].value.x;
 						
 						var currentime = new Date().getTime();
-					    if(currentime/1000 - starttime/1000 > 10 && scenetarns ==0) 
+					    if(currentime/1000 - starttime/1000 > 7 && scenetarns <= 4) 
 					    {
 					        starttime = currentime;
-					        scenetarns=1;
+					        scenetarns += 1;
 					        var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat };
 					        var textureLoader = new THREE.TextureLoader();
 	        				var specularMap = new THREE.WebGLRenderTarget( 2048, 2048, pars );
 	        				specularMap.texture.generateMipmaps = false;        
-        					var diffuseTexture1 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", function () {
+	        				if(scenetarns >=2 ){
+	        					var diffuseTexture1 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", function () {
 
-        						loadTextures();
-        						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
+	        						loadTextures();
+	        						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
 
-        					} );
-	        				var diffuseTexture2 = textureLoader.load( "textures/terrain/grasslight-big.jpg", loadTextures );
-	        				var detailTexture = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", loadTextures );
+	        					} );}
+	        				if(scenetarns < 2 ){
+	        					var diffuseTexture1 = textureLoader.load( "textures/terrain/grasslight-big.jpg", function () {
+
+	        						loadTextures();
+	        						applyShader( THREE.LuminosityShader, diffuseTexture1, specularMap );
+
+	        					} );}
+
+	        				if(scenetarns == 1 || scenetarns > 2){
+	        					var diffuseTexture2 = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", loadTextures );}
+	        				
+	        				if(scenetarns == 2 ){
+	        					var diffuseTexture2 = textureLoader.load( "textures/terrain/grasslight-big.jpg", loadTextures );}
+
+	        				if(scenetarns >3)	
+	        					var detailTexture = textureLoader.load( "textures/terrain/backgrounddetailed6.jpg", loadTextures );
+
+	        				if(scenetarns <=3)	
+	        					var detailTexture = textureLoader.load( "textures/terrain/grasslight-big-nm.jpg", loadTextures );
 
 	        				diffuseTexture1.wrapS = diffuseTexture1.wrapT = THREE.RepeatWrapping;
 	        				diffuseTexture2.wrapS = diffuseTexture2.wrapT = THREE.RepeatWrapping;
