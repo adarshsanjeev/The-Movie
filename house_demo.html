@@ -57,7 +57,7 @@
 
 			var loader = new THREE.ColladaLoader();
 			loader.options.convertUpAxis = true;
-			loader.load( './models/Collada/untitled.dae', function ( collada ) {
+			loader.load( './models/Collada/room.dae', function ( collada ) {
 
 				dae = collada.scene;
 
@@ -74,6 +74,7 @@
 
 				dae.scale.x = dae.scale.y = dae.scale.z = 0.06;
 				dae.position.x = 0,dae.position.y = 0,dae.position.z = 0;
+				
 				dae.updateMatrix();
 				init();
 				animate();
@@ -110,10 +111,14 @@
 
 				var line = new THREE.LineSegments( geometry, material );
 				scene.add( line );
-
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMapEnabled = true;
+				container.appendChild( renderer.domElement );
 				// Add the COLLADA
 
-
+				dae.receiveShadow = true;
 				scene.add( dae );
 
 				// particleLight = new THREE.Mesh( new THREE.SphereGeometry( 100, 11118, 1118 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
@@ -121,55 +126,40 @@
 
 				// Lights
 
-				ambientLight = new THREE.AmbientLight(0xE3A028);
-            	ambientLight.intensity = 0.6;
+				ambientLight = new THREE.AmbientLight(0xffffff);
+            	ambientLight.intensity = 0.7;
             	scene.add(ambientLight); 
 
             	ambientLight1 = new THREE.AmbientLight(0x9AE4DB);
             	ambientLight1.intensity = 0.4;
             	// scene.add(ambientLight1); 
 
-
-				var directionalLight = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0xDE3B3B );
-				directionalLight.position.x = -5;
-				directionalLight.position.y = 20;
-				directionalLight.position.z = -3;
+				var directionalLight = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0x792323 );
+				directionalLight.position.x = -1.87;
+				directionalLight.position.y = 5.3;
+				directionalLight.position.z = -0.557847;
 				directionalLight.intensity = 0.7;
 				directionalLight.position.normalize();
-				scene.add( directionalLight );
+				// scene.add( directionalLight );
 
-				var directionalLight1 = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0x4466EA);
-				directionalLight1.position.x = 5;
-				directionalLight1.position.y = 10;
-				directionalLight1.position.z = 3;
-				directionalLight1.intensity = 1.2;
+				var directionalLight1 = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0xF2EA40);
+				directionalLight1.position.x = 20;
+				directionalLight1.position.y = 39;
+				directionalLight1.position.z = 21;
+				directionalLight1.intensity = 1;
 				directionalLight1.position.normalize();
 				scene.add( directionalLight1 );
 
-				var directionalLight2 = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0x1DD41F);
-				directionalLight2.position.x = 5;
-				directionalLight2.position.y = 20;
-				directionalLight2.position.z = -3;
-				directionalLight2.intensity = 0.3;
-				directionalLight2.position.normalize();
-				scene.add( directionalLight2 );
+				var spotLight1 = new THREE.SpotLight(0x3C2020);
+				spotLight1.position.set(-1.87, 5.3, -0.55);
+				spotLight1.castShadow = true;
+				scene.add(spotLight1);
 
-				var directionalLight3 = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0xB57273);
-				directionalLight3.position.x = 5;
-				directionalLight3.position.y = 20;
-				directionalLight3.position.z = -3;
-				directionalLight3.intensity = 0.7;
-				directionalLight3.position.normalize();
-				// scene.add( directionalLight3 );
 
 
 				var pointLight = new THREE.PointLight( 0xffffff, 4 );
 				// particleLight.add( pointLight );
 
-				renderer = new THREE.WebGLRenderer();
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				container.appendChild( renderer.domElement );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 				controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -218,7 +208,6 @@
 				var timer = Date.now() * 0.0005;
 
 				camera.lookAt( scene.position );
-
 
 				THREE.AnimationHandler.update( clock.getDelta() );
 
