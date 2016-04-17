@@ -254,6 +254,7 @@
 			var starttime = new Date().getTime();
 			var scenetarns = 0;
 			var angle=0,radius=1500,interval=0;
+			var trees = new Array();
 			init();
 			animate();
 
@@ -343,7 +344,7 @@
 
 				uniformsTerrain[ "shininess" ].value = 30;
 
-				uniformsTerrain[ "uDisplacementScale" ].value = 375;
+				uniformsTerrain[ "uDisplacementScale" ].value = 40;
 
 				uniformsTerrain[ "uRepeatOverlay" ].value.set( 6, 6 );
 
@@ -586,15 +587,16 @@
 				// model
 				var position = 500;
 				var trn=0;
+				var scale1=2;
+				var scale2=1.5;
 				var loader = new THREE.OBJLoader( manager );
-				for (var trn =0 ; trn <=40; trn++) {
-					if(trn <20){				
-						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(100,4000), 40-0.5,-500+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50,70,50);scene.add( object );
+				for (var trn =0 ; trn <=20;trn++) {
+					if(trn <10){				
+						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(100,4000), 35-0.5,-500+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50*scale1,70*scale1,50*scale1);scene.add( object );trees.push(object);
 						}, onProgress, onError );}
-					if(trn >=20){				
-						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(50,4000), 40-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10,20,8);scene.add( object );
+					if(trn >=10){				
+						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(50,4000), 35-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10*scale2,20*scale2,8*scale2);scene.add( object );trees.push(object);
 						}, onProgress, onError );}
-
 				};
 							
 			}
@@ -604,6 +606,16 @@
 				return Math.random() * (max - min) + min;
 				}
 				
+			function getRandomInt(min, max) {
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+			function treeFall(tree)
+			{
+				tree.rotation.x+=0.01;
+				tree.rotation.z+=0.01;
+				if ((tree.rotation.x > Math.PI/2) || (tree.rotation.z > Math.PI/2))
+					scene.remove(tree);
+			}
 			function onWindowResize( event ) {
 
 				SCREEN_WIDTH = window.innerWidth;
@@ -687,7 +699,7 @@
 				scene.traverse(function (e){						
 					if(e.name.search(/Model-/i) != -1)
 					{
-						e.position.x -= 5;		
+						e.position.x -= 7;		
 					}	
 				});
 
@@ -796,6 +808,10 @@
 				
 				angle+=0.004;
 				camera.position.set(radius*Math.cos(angle),800,radius*Math.sin(angle));
+				
+				for(var i=0; i<20; i+=1){
+					treeFall(trees[i]);	
+				}
 
 			}
 
