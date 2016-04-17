@@ -36,7 +36,7 @@
 		<script src="js/controls/OrbitControls.js"></script>
 		<script src="js/Mirror.js"></script>
 		<script src="js/WaterShader.js"></script>
-
+		<script src="js/loaders/OBJLoader.js"></script>
 		<script src="js/Detector.js"></script>
 		<script src="js/libs/stats.min.js"></script>
 
@@ -52,6 +52,7 @@
 			var container, stats;
 			var camera, scene, renderer;
 			var sphere;
+			var starttime = new Date().getTime();
 
 			var parameters = {
 				width: 2000,
@@ -121,6 +122,41 @@
 				mirrorMesh.rotation.x = - Math.PI * 0.5;
 				scene.add( mirrorMesh );
 
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					// console.log( item, loaded , total );
+				};
+				var texture = new THREE.Texture();
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						// console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+				var loader = new THREE.ImageLoader( manager );
+				loader.load( 'models/obj/Small_Tropical_Island/rc1.jpg', function ( image ) {
+					texture.image = image;
+					texture.needsUpdate = true;
+				} );	
+				// model
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'models/obj/Small_Tropical_Island/Small_Tropical_Island.obj', function ( object ) {
+					object.traverse( function ( child ) {
+						if ( child instanceof THREE.Mesh ) {
+							child.material.map = texture;
+						}
+					} );
+					object.position.y = -17;
+					object.position.x = 0;
+					object.position.z = 0;
+					object.name = "Model";
+					object.scale.set(7,10,8);
+					sphere = object;
+					scene.add( sphere );
+
+				}, onProgress, onError );
 
 				// load skybox
 
@@ -189,7 +225,7 @@
 				} );
 
 				sphere = new THREE.Mesh( geometry, material );
-				scene.add( sphere );
+				// scene.add( sphere );
 
 			}
 
@@ -205,10 +241,15 @@
 			function render() {
 
 				var time = performance.now() * 0.001;
+				sphere.position.y -= 0.5;
+				var currentime = new Date().getTime();
+			    if(currentime/1000 - starttime/1000 > 4)
+			    {
+			    	starttime = currentime;
 
-				sphere.position.y = Math.sin( time ) * 500 + 250;
-				sphere.rotation.x = time * 0.5;
-				sphere.rotation.z = time * 0.51;
+
+			    } 
+
 
 				water.material.uniforms.time.value += 1.0 / 60.0;
 				controls.update();
