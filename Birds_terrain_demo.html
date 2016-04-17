@@ -417,6 +417,7 @@
 				// SCENE (FINAL)
 
 				scene = new THREE.Scene();
+				LoadTerrain();
 				scene.fog = new THREE.Fog( 0x050505, 1, 10000 );
 
 				// LIGHTS
@@ -519,6 +520,9 @@
 					mesh.castShadow = true;
 					mesh.receiveShadow = false;
 
+					if(duration==0.6)
+						mesh.scale.multiplyScalar( 0.8);
+
 					scene.add( mesh );
 
 					morphs.push( mesh );
@@ -540,10 +544,10 @@
 
 				loader.load( "models/animated/horse.js", function( geometry ) {
 
-					addMorph( geometry, 250, 0.6, startX -500, 50, 700 );
-					addMorph( geometry, 250, 0.6, startX - Math.random() * 500, 50, -200 );
-					addMorph( geometry, 250, 0.6, startX - Math.random() * 500, 50, -800 );
-					addMorph( geometry, 250, 0.6, startX - Math.random() * 500, 50, 1000 );
+					addMorph( geometry, 200, 0.6, startX -500, 50, 700 );
+					addMorph( geometry, 200, 0.6, startX*1.5- Math.random() * 500, 50, -100 );
+					addMorph( geometry, 200, 0.6, startX*2 - Math.random() * 500, 50, -1000 );
+					addMorph( geometry, 200, 0.6, startX - Math.random() * 500, 50, 1000 );
 					// console.log(geometry);`
 // 
 				} );
@@ -579,21 +583,19 @@
 					texture.needsUpdate = true;
 				} );	
 				// model
-				var position = -5000;
+				var position = 500;
 				var trn=0;
 				var loader = new THREE.OBJLoader( manager );
 				for (var trn =0 ; trn <=19; trn++) {
 					if(trn <10){				
-						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+4800, 40-0.5,position+trn*260);object.name = "Model-" + trn++ ;object.scale.set(20,50,30);scene.add( object );
+						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+800, 40-0.5,-9500+trn*300);object.name = "Model-" + trn++ ;object.scale.set(50,70,50);scene.add( object );
 						}, onProgress, onError );}
 					if(trn >=10){				
-						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+4400, 40-0.5,position+(trn%10)*260);object.name = "Model-" + trn++ ;object.scale.set(50,70,50);scene.add( object );
+						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+2000, 40-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10,20,8);scene.add( object );
 						}, onProgress, onError );}
 
 				};
-					
-				LoadTerrain();
-		
+							
 			}
 
 			//
