@@ -586,12 +586,12 @@
 				var position = 500;
 				var trn=0;
 				var loader = new THREE.OBJLoader( manager );
-				for (var trn =0 ; trn <=19; trn++) {
-					if(trn <10){				
-						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+800, 40-0.5,-9500+trn*300);object.name = "Model-" + trn++ ;object.scale.set(50,70,50);scene.add( object );
+				for (var trn =0 ; trn <=40; trn++) {
+					if(trn <20){				
+						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(100,4000), 40-0.5,-500+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50,70,50);scene.add( object );
 						}, onProgress, onError );}
-					if(trn >=10){				
-						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+2000, 40-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10,20,8);scene.add( object );
+					if(trn >=20){				
+						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(50,4000), 40-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10,20,8);scene.add( object );
 						}, onProgress, onError );}
 
 				};
@@ -599,7 +599,10 @@
 			}
 
 			//
-
+			function getRandomArbitrary(min, max) {
+				return Math.random() * (max - min) + min;
+				}
+				
 			function onWindowResize( event ) {
 
 				SCREEN_WIDTH = window.innerWidth;
