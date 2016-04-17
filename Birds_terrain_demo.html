@@ -253,6 +253,7 @@
 			var mlib = {};
 			var starttime = new Date().getTime();
 			var scenetarns = 0;
+			var angle=0,radius=1500,interval=0;
 			init();
 			animate();
 
@@ -403,7 +404,7 @@
 				// CAMERA
 
 				camera = new THREE.PerspectiveCamera( 40, SCREEN_WIDTH / SCREEN_HEIGHT, 2, 4000 );
-				camera.position.set( -1200, 800, 1200 );
+				camera.position.set(radius*Math.cos(angle),800,radius*Math.sin(angle));
 
 				controls = new THREE.OrbitControls( camera );
 				controls.target.set( 0, 0, 0 );
@@ -609,6 +610,7 @@
 				SCREEN_HEIGHT = window.innerHeight;
 
 				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
 
 				camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
 				camera.updateProjectionMatrix();
@@ -769,6 +771,7 @@
 
 						quadTarget.material = mlib[ "normal" ];
 						renderer.render( sceneRenderTarget, cameraOrtho, normalMap, true );
+						
 
 					}
 
@@ -790,6 +793,9 @@
 					//renderer.render( scene, camera );
 					composer.render( 0.1 );
 				}
+				
+				angle+=0.004;
+				camera.position.set(radius*Math.cos(angle),800,radius*Math.sin(angle));
 
 			}
 
