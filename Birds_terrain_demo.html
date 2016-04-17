@@ -592,12 +592,11 @@
 				var loader = new THREE.OBJLoader( manager );
 				for (var trn =0 ; trn <=20;trn++) {
 					if(trn <10){				
-						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(100,4000), 35-0.5,-500+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50*scale1,70*scale1,50*scale1);scene.add( object );
+						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(100,4000), 35-0.5,-500+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50*scale1,70*scale1,50*scale1);scene.add( object );trees.push(object);
 						}, onProgress, onError );}
 					if(trn >=10){				
-						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(50,4000), 35-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10*scale2,20*scale2,8*scale2);scene.add( object );
+						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(50,4000), 35-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10*scale2,20*scale2,8*scale2);scene.add( object );trees.push(object);
 						}, onProgress, onError );}
-
 				};
 							
 			}
@@ -610,14 +609,12 @@
 			function getRandomInt(min, max) {
 				return Math.floor(Math.random() * (max - min + 1)) + min;
 			}
-			function treeFall(trees)
+			function treeFall(tree)
 			{
-				for(var i=0;i<trees.length;i++){
-					var tree = trees[i];
-					tree.rotate.y+=0.05;
-					tree.rotate.x+=1;
-					tree.rotate.z+=1;
-				}
+				tree.rotation.x+=0.01;
+				tree.rotation.z+=0.01;
+				if ((tree.rotation.x > Math.PI/2) || (tree.rotation.z > Math.PI/2))
+					scene.remove(tree);
 			}
 			function onWindowResize( event ) {
 
@@ -811,11 +808,9 @@
 				
 				angle+=0.004;
 				camera.position.set(radius*Math.cos(angle),800,radius*Math.sin(angle));
-				treeFall(trees);
-				interval++;
-				if(interval==3){
-					interval=0;
-					trees.push(scene.getObjectByName( "Model-"+getRandomInt(0,20), true ));
+				
+				for(var i=0; i<20; i+=1){
+					treeFall(trees[i]);	
 				}
 
 			}
