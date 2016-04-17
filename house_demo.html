@@ -27,10 +27,6 @@
 		</style>
 	</head>
 	<body>
-		<div id="info">
-			<a href="http://threejs.org" target="_blank">three.js</a> -
-			monster by <a href="http://www.3drt.com/downloads.htm" target="_blank">3drt</a>
-		</div>
 
 		<script src="build/three.min.js"></script>
 		<script src="js/controls/OrbitControls.js"></script>
@@ -57,7 +53,7 @@
 
 			var loader = new THREE.ColladaLoader();
 			loader.options.convertUpAxis = true;
-			loader.load( './models/Collada/room.dae', function ( collada ) {
+			loader.load( 'bathroom.dae', function ( collada ) {
 
 				dae = collada.scene;
 
@@ -128,7 +124,7 @@
 
 				ambientLight = new THREE.AmbientLight(0xffffff);
             	ambientLight.intensity = 0.7;
-            	scene.add(ambientLight); 
+            	// scene.add(ambientLight); 
 
             	ambientLight1 = new THREE.AmbientLight(0x9AE4DB);
             	ambientLight1.intensity = 0.4;
@@ -148,12 +144,12 @@
 				directionalLight1.position.z = 21;
 				directionalLight1.intensity = 1;
 				directionalLight1.position.normalize();
-				scene.add( directionalLight1 );
+				// scene.add( directionalLight1 );
 
 				var spotLight1 = new THREE.SpotLight(0x3C2020);
 				spotLight1.position.set(-1.87, 5.3, -0.55);
 				spotLight1.castShadow = true;
-				scene.add(spotLight1);
+				// scene.add(spotLight1);
 
 
 
