@@ -44,7 +44,7 @@
 			<a href="http://opengameart.org/content/backgrounds-topdown-games">davis123</a> -
 			music by <a href="http://incompetech.com/m/c/royalty-free/index.html?keywords=00875">Kevin MacLeod</a>
 		</div> -->
-
+<!-- 
 		<div id="footer">
 			<div class="c">
 			day / night: <span class="h">n</span>
@@ -53,7 +53,7 @@
 			<div class="c">
 			animate terrain: <span class="h">m</span>
 			</div>
-		</div>
+		</div> -->
 
 		<script src="build/three.min.js"></script>
 
@@ -252,8 +252,9 @@
 
 			var mlib = {};
 			var starttime = new Date().getTime();
-			var scenetarns = 0;
-			var angle=0,radius=1500,interval=0;
+			var starttimetree = new Date().getTime();
+			var scenetarns = 0,numberstree=0;
+			var angle=90,radius=1500,interval=0;
 			var trees = new Array();
 			init();
 			animate();
@@ -585,17 +586,17 @@
 					texture.needsUpdate = true;
 				} );	
 				// model
-				var position = 500;
+				var positiontree = 2000;
 				var trn=0;
 				var scale1=2;
 				var scale2=1.5;
 				var loader = new THREE.OBJLoader( manager );
 				for (var trn =0 ; trn <=20;trn++) {
 					if(trn <10){				
-						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(100,4000), 35-0.5,-500+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50*scale1,70*scale1,50*scale1);scene.add( object );trees.push(object);
+						loader.load( 'models/Tree/Tree.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(positiontree+getRandomArbitrary(100,4000),-10,-1000+(trn%10)*500);object.name = "Model-" + trn++ ;object.scale.set(50*scale1,70*scale1,50*scale1);scene.add( object );trees.push(object);
 						}, onProgress, onError );}
 					if(trn >=10){				
-						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(position+getRandomArbitrary(50,4000), 35-0.5,-500+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10*scale2,20*scale2,8*scale2);scene.add( object );trees.push(object);
+						loader.load( 'models/Tree/tree_oak.obj', function ( object ) {object.traverse( function ( child ) {if ( child instanceof THREE.Mesh ) {child.material.map = texture;}} );object.position.set(positiontree+getRandomArbitrary(50,4000),-10,-1000+400*(trn%10) );object.name = "Model-" + trn++ ;object.scale.set(10*scale2,20*scale2,8*scale2);scene.add( object );trees.push(object);
 						}, onProgress, onError );}
 				};
 							
@@ -609,12 +610,14 @@
 			function getRandomInt(min, max) {
 				return Math.floor(Math.random() * (max - min + 1)) + min;
 			}
-			function treeFall(tree)
+			function treeFall(tree,numberstree)
 			{
-				tree.rotation.x+=0.01;
-				tree.rotation.z+=0.01;
-				if ((tree.rotation.x > Math.PI/2) || (tree.rotation.z > Math.PI/2))
-					scene.remove(tree);
+				for(var i=0; i<numberstree; i+=1){
+					tree[i].rotation.x+=0.001*(numberstree+1)%5;
+					tree[i].rotation.z+=0.001*(numberstree+1)%5;
+					if ((tree[i].rotation.x > Math.PI/2) || (tree[i].rotation.z > Math.PI/2))
+						scene.remove(tree[i]);
+				}
 			}
 			function onWindowResize( event ) {
 
@@ -699,7 +702,7 @@
 				scene.traverse(function (e){						
 					if(e.name.search(/Model-/i) != -1)
 					{
-						e.position.x -= 7;		
+						e.position.x -= 5;		
 					}	
 				});
 
@@ -732,9 +735,9 @@
 						uniformsTerrain[ "uOffset" ].value.x = 4 * uniformsNoise[ "offset" ].value.x;
 						
 						var currentime = new Date().getTime();
-					    if(currentime/1000 - starttime/1000 > 7 && scenetarns <= 4) 
+					    if(currentime/1000 - starttime/1000 > 8 && scenetarns <= 4) 
 					    {
-					        starttime = currentime;
+					    	starttime = currentime;
 					        scenetarns += 1;
 					        var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat };
 					        var textureLoader = new THREE.TextureLoader();
@@ -809,10 +812,16 @@
 				angle+=0.004;
 				camera.position.set(radius*Math.cos(angle),800,radius*Math.sin(angle));
 				
-				for(var i=0; i<20; i+=1){
-					treeFall(trees[i]);	
-				}
+				if(currentime/1000 - starttimetree/1000 > (2.5 - numberstree*0.05))
+				{
+					starttimetree = currentime;
+					if(numberstree<20)
+						numberstree++;
+				} 
 
+				if(scenetarns >= 1){			
+						treeFall(trees,numberstree);	
+				}
 			}
 
 		</script>
